@@ -1,10 +1,22 @@
-var fs = require("fs")
+const User = require("../db/user")
 
 module.exports = function (app) {
-var db = fs.readFileSync("db/db.json")
-console.log("logging" + db)
 
 app.get("/api/notes", function(req, res) {
-return res.json(db);
+  User.getNote()
+  .then(notes => res.json(notes))
+  .catch(err => res.status(500).json(err)) 
+})
+
+app.post("/api/notes", function(req, res) {
+ User.addNote(req.body)
+ .then(note => res.json(note))
+ .catch(err => res.status(500).json(err)) 
+})
+
+app.delete("/api/notes/:id", function(req, res) {
+ User.deleteNote(req.params.id)
+ .then(() => res.json({ok: true}))
+ .catch(err => res.status(500).json(err)) 
 })
 }
